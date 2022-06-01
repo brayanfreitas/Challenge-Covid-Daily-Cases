@@ -1,9 +1,9 @@
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { DataSource } from 'typeorm';
 dotenv.config();
 
-const config: TypeOrmModuleOptions = {
+export const dataSource = new DataSource({
   type: 'postgres',
   host: process.env.TYPEORM_HOST ? process.env.TYPEORM_HOST : 'localhost',
   port: Number(process.env.TYPEORM_PORT)
@@ -18,9 +18,6 @@ const config: TypeOrmModuleOptions = {
   database: process.env.TYPEORM_DATABASE
     ? process.env.TYPEORM_DATABASE
     : 'covid_cases',
-
   entities: [`${__dirname}/**/*.entity{.ts,.js}`],
   migrations: [path.join(__dirname, '/migrations/*{.ts,.js}')]
-};
-
-export = config;
+});
