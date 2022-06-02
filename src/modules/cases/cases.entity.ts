@@ -34,7 +34,7 @@ export class Cases {
   @ApiProperty({ description: 'Percentage of sequences ' })
   percSequences: number;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'int', name: 'num_sequences_total' })
   @IsNumber()
   @ApiProperty({ description: 'Total number of sequences' })
   numSequencesTotal: number;

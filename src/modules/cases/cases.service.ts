@@ -9,4 +9,9 @@ export class CasesService {
     @InjectRepository(Cases)
     private readonly casesRepository: Repository<Cases>
   ) {}
+
+  async getCountryAndVariantByDate(date: string) {
+    const response = this.casesRepository.find({ where: { date } });
+    return response;
+  }
 }
