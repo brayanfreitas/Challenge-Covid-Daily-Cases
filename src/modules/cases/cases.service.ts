@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cases } from './cases.entity';
 import { GetSplitByVariantAndsLocationRequestDto } from './dto/request/GetSplitByVariantAndsLocationRequestDto';
-import { GetSplitByVariantAndsLocationReponseDto } from './dto/response/GetSplitByVariantAndsLocationReponseDto';
+import {
+  GetSplitByVariantAndsLocationReponseDto,
+  LocationData
+} from './dto/response/GetSplitByVariantAndsLocationReponseDto';
 
 @Injectable()
 export class CasesService {
@@ -16,23 +19,13 @@ export class CasesService {
     request: GetSplitByVariantAndsLocationRequestDto
   ): Promise<GetSplitByVariantAndsLocationReponseDto[]> {
     const { date } = request;
+
     const cases = await this.casesRepository.find({ where: { date } });
 
     const variantSplit = this.groupByPropriety(cases, 'variant');
+    const locationSplit = this.groupByLocation(variantSplit);
 
-    variantSplit.forEach((variant) => {
-      const resultGroupedByLocation = this.groupByPropriety(
-        variant.variantCasesData,
-        'location'
-      );
-      variant.variantCasesData = Object.keys(resultGroupedByLocation).map(
-        (key) => {
-          return { data: resultGroupedByLocation[key] };
-        }
-      ) as [];
-    });
-
-    return variantSplit as GetSplitByVariantAndsLocationReponseDto[];
+    return locationSplit;
   }
 
   private groupByPropriety(cases: Cases[], attribute: string) {
@@ -45,5 +38,39 @@ export class CasesService {
     return Object.keys(groupedByProps).map((key) => {
       return { [attribute]: key, variantCasesData: groupedByProps[key] };
     });
+  }
+
+  private groupByLocation(variantSplit) {
+    variantSplit.forEach((variant) => {
+      const resultGroupedByLocation = this.groupByPropriety(
+        variant.variantCasesData,
+        'location'
+      );
+      variant.variantCasesData = Object.keys(resultGroupedByLocation).map(
+        (key) => {
+          return { data: resultGroupedByLocation[key] };
+        }
+      );
+    }) as LocationData[];
+
+    return variantSplit as GetSplitByVariantAndsLocationReponseDto[];
+  }
+
+  async getByCountryAndVarianByDateCumulative(
+    request: GetSplitByVariantAndsLocationRequestDto
+  ) {
+    const { date } = request;
+
+    const cases = await this.casesRepository
+      .createQueryBuilder('cases')
+      .select('variant')
+      .addSelect('location')
+      .addSelect('SUM(num_sequences) as total')
+      .where(`date <= :date`, { date })
+      .groupBy('location')
+      .addGroupBy('variant')
+      .getRawMany();
+
+    return cases;
   }
 }

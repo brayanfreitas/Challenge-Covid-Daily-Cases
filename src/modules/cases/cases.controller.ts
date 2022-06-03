@@ -32,4 +32,11 @@ export class CasesController {
   ) {
     return this.casesService.getSplitByCountryAndVarianByDate(request);
   }
+
+  @Get(':date/cumulative')
+  async getByCountryAndVarianByDateAccumulative(
+    @Param() request: GetSplitByVariantAndsLocationRequestDto
+  ) {
+    return this.casesService.getByCountryAndVarianByDateCumulative(request);
+  }
 }
