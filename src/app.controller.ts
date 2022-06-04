@@ -18,4 +18,9 @@ export class AppController {
   getChcallengeMessage(): string {
     return this.appService.getChallengeMessage();
   }
+
+  @Get('/dates')
+  getAllAvailableDates() {
+    return this.appService.getAllAvailableDates();
+  }
 }
