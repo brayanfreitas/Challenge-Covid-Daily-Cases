@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cases } from './cases.entity';
 import { GetSplitByVariantAndsLocationRequestDto } from './dto/request/GetSplitByVariantAndsLocationRequestDto';
-import { GetSplitByVariantAndsLocationReponseDto } from './dto/response/GetSplitByVariantAndsLocationReponseDto';
+import {
+  GetSplitByVariantAndsLocationReponseDto,
+  LocationData
+} from './dto/response/GetSplitByVariantAndsLocationReponseDto';
 
 @Injectable()
 export class CasesService {
@@ -16,9 +19,18 @@ export class CasesService {
     request: GetSplitByVariantAndsLocationRequestDto
   ): Promise<GetSplitByVariantAndsLocationReponseDto[]> {
     const { date } = request;
-    const cases = await this.casesRepository.find({ where: { date } });
+    const cases = await this.casesRepository.find({
+      where: { date },
+      cache: true
+    });
 
     const variantSplit = this.groupByPropriety(cases, 'variant');
+
+    const locationSplit = this.groupByLocation(variantSplit);
+
+    return locationSplit;
+  }
+
   async getByCountryAndVarianByDateCumulative(
     request: GetSplitByVariantAndsLocationRequestDto
   ) {
@@ -29,10 +41,10 @@ export class CasesService {
       .select('variant')
       .addSelect('location')
       .addSelect('SUM(num_sequences) as total')
-      .distinct(true)
       .where('date <= :date', { date })
       .groupBy('location')
       .addGroupBy('variant')
+      .cache(true)
       .getRawMany();
 
     const casesSplittedByVariant = this.groupByPropriety(cases, 'variant');
@@ -41,7 +53,7 @@ export class CasesService {
       casesSplittedByVariant
     );
 
-    return variantSplit as GetSplitByVariantAndsLocationReponseDto[];
+    return casesSplittedByLocation as GetSplitByVariantAndsLocationReponseDto[];
   }
 
   private groupByPropriety(cases: Cases[], attribute: string) {
@@ -55,5 +67,21 @@ export class CasesService {
     return Object.keys(groupedByProps).map((key) => {
       return { [attribute]: key, variantCasesData: groupedByProps[key] };
     });
+  }
+
+  private groupByLocation(variantSplit) {
+    variantSplit.forEach((variant) => {
+      const resultGroupedByLocation = this.groupByPropriety(
+        variant.variantCasesData,
+        'location'
+      );
+      variant.variantCasesData = Object.keys(resultGroupedByLocation).map(
+        (key) => {
+          return { data: resultGroupedByLocation[key] };
+        }
+      );
+    }) as LocationData[];
+
+    return variantSplit as GetSplitByVariantAndsLocationReponseDto[];
   }
 }
