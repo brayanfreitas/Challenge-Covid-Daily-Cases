@@ -38,7 +38,6 @@ export class CasesService {
       .select('variant')
       .addSelect('location')
       .addSelect('SUM(num_sequences) as total')
-      .distinct(true)
       .where('date <= :date', { date })
       .groupBy('location')
       .addGroupBy('variant')
