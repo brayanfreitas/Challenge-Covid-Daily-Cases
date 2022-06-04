@@ -20,6 +20,7 @@ export class AppService {
       .select('date::varchar')
       .distinct(true)
       .orderBy('date')
+      .cache(true)
       .getRawMany();
 
     const datesObject = dates.map((values) => {

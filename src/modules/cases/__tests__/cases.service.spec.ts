@@ -65,6 +65,7 @@ describe('Cases Module', () => {
       expect(selectQueryBuilder.where).toHaveBeenCalledTimes(1);
       expect(selectQueryBuilder.groupBy).toHaveBeenCalledTimes(1);
       expect(selectQueryBuilder.addGroupBy).toHaveBeenCalledTimes(1);
+      expect(selectQueryBuilder.cache).toHaveBeenCalledTimes(1);
       expect(selectQueryBuilder.getRawMany).toHaveBeenCalledTimes(1);
       expect(reponse).toBeDefined();
       expect(reponse).toHaveLength(4);

@@ -18,7 +18,7 @@ const config: TypeOrmModuleOptions = {
   database: process.env.TYPEORM_DATABASE
     ? process.env.TYPEORM_DATABASE
     : 'covid_cases',
-
+  cache: { duration: 30000 },
   entities: [`${__dirname}/**/*.entity{.ts,.js}`],
   migrations: [path.join(__dirname, '/migrations/*{.ts,.js}')]
 };

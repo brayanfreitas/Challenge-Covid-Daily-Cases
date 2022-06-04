@@ -61,6 +61,7 @@ describe('AppService', () => {
       const response = await service.getAllAvailableDates();
       expect(selectQueryBuilder.select).toHaveBeenCalledTimes(1);
       expect(selectQueryBuilder.distinct).toHaveBeenCalledTimes(1);
+      expect(selectQueryBuilder.cache).toHaveBeenCalledTimes(1);
       expect(selectQueryBuilder.getRawMany).toHaveBeenCalledTimes(1);
       expect(response).toBeDefined();
       expect(response.length).toEqual(5);
