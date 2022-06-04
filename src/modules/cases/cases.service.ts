@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cases } from './cases.entity';
 import { GetSplitByVariantAndsLocationRequestDto } from './dto/request/GetSplitByVariantAndsLocationRequestDto';
-import { GetSplitByVariantAndsLocationReponseDto } from './dto/response/GetSplitByVariantAndsLocationReponseDto';
+import {
+  GetSplitByVariantAndsLocationReponseDto,
+  LocationData
+} from './dto/response/GetSplitByVariantAndsLocationReponseDto';
 
 @Injectable()
 export class CasesService {
@@ -19,11 +22,7 @@ export class CasesService {
     const cases = await this.casesRepository.find({ where: { date } });
 
     const variantSplit = this.groupByPropriety(cases, 'variant');
-=======
 
-    const cases = await this.casesRepository.find({ where: { date } });
-
-    const variantSplit = this.groupByPropriety(cases, 'variant');
     const locationSplit = this.groupByLocation(variantSplit);
 
     return locationSplit;
@@ -51,7 +50,7 @@ export class CasesService {
       casesSplittedByVariant
     );
 
-    return variantSplit as GetSplitByVariantAndsLocationReponseDto[];
+    return casesSplittedByLocation as GetSplitByVariantAndsLocationReponseDto[];
   }
 
   private groupByPropriety(cases: Cases[], attribute: string) {
