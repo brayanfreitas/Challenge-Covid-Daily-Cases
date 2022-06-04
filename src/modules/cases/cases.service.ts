@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cases } from './cases.entity';
+import { GetSplitByVariantAndsLocationRequestDto } from './dto/request/GetSplitByVariantAndsLocationRequestDto';
+import { GetSplitByVariantAndsLocationReponseDto } from './dto/response/GetSplitByVariantAndsLocationReponseDto';
 
 @Injectable()
 export class CasesService {
@@ -14,6 +16,10 @@ export class CasesService {
     request: GetSplitByVariantAndsLocationRequestDto
   ): Promise<GetSplitByVariantAndsLocationReponseDto[]> {
     const { date } = request;
+    const cases = await this.casesRepository.find({ where: { date } });
+
+    const variantSplit = this.groupByPropriety(cases, 'variant');
+=======
 
     const cases = await this.casesRepository.find({ where: { date } });
 
@@ -45,11 +51,10 @@ export class CasesService {
       casesSplittedByVariant
     );
 
-    return casesSplittedByLocation;
+    return variantSplit as GetSplitByVariantAndsLocationReponseDto[];
   }
 
   private groupByPropriety(cases: Cases[], attribute: string) {
-    // istanbul ignore next
     const groupedByProps = cases.reduce((group, cases: Cases) => {
       const key = attribute === 'variant' ? cases.variant : cases.location;
       /* istanbul ignore next */

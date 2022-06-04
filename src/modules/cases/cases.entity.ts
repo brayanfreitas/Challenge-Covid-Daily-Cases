@@ -6,36 +6,36 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export class Cases {
   @PrimaryGeneratedColumn('uuid')
   @IsString()
-  @ApiProperty({ description: 'Relation id' })
+  @ApiProperty({ description: 'Relation id', type: String })
   id: string;
 
   @Column()
   @IsString()
-  @ApiProperty({ description: 'Variant Location' })
+  @ApiProperty({ description: 'Variant Location', type: String })
   location: string;
 
-  @Column({})
+  @Column({ type: 'date' })
   @IsDateString()
-  @ApiProperty({ description: 'Variant occurence location' })
+  @ApiProperty({ description: 'Variant occurence location', type: String })
   date: string;
 
   @Column()
   @IsString()
-  @ApiProperty({ description: 'Variant occurence date' })
+  @ApiProperty({ description: 'Variant occurence date', type: String })
   variant: string;
 
   @Column({ type: 'int', name: 'num_sequences' })
   @IsNumber()
-  @ApiProperty({ description: 'Number of sequences processed' })
+  @ApiProperty({ description: 'Number of sequences processed', type: Number })
   numSequences: number;
 
   @Column({ type: 'decimal', name: 'perc_sequences' })
   @IsNumber()
-  @ApiProperty({ description: 'Percentage of sequences ' })
+  @ApiProperty({ description: 'Percentage of sequences ', type: Number })
   percSequences: number;
 
   @Column({ type: 'int', name: 'num_sequences_total' })
   @IsNumber()
-  @ApiProperty({ description: 'Total number of sequences' })
+  @ApiProperty({ description: 'Total number of sequences', type: Number })
   numSequencesTotal: number;
 }
