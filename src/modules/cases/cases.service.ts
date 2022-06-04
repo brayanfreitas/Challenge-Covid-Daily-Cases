@@ -38,6 +38,7 @@ export class CasesService {
       .select('variant')
       .addSelect('location')
       .addSelect('SUM(num_sequences) as total')
+      .distinct(true)
       .where('date <= :date', { date })
       .groupBy('location')
       .addGroupBy('variant')
@@ -53,8 +54,10 @@ export class CasesService {
   }
 
   private groupByPropriety(cases: Cases[], attribute: string) {
+    // istanbul ignore next
     const groupedByProps = cases.reduce((group, cases: Cases) => {
       const key = attribute === 'variant' ? cases.variant : cases.location;
+      /* istanbul ignore next */
       (group[key] = group[key] ?? []).push(cases);
       return group;
     }, {});
