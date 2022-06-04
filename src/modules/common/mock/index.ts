@@ -25,6 +25,7 @@ export const selectQueryBuilderMock: () => SelectQueryBuilder<any> = jest.fn(
     andWhere: jest.fn().mockReturnThis(),
     distinct: jest.fn().mockReturnThis(),
     orderBy: jest.fn().mockReturnThis(),
+    cache: jest.fn().mockReturnThis(),
     getRawMany: jest.fn().mockImplementation(() => Promise.resolve([]))
   })
 );

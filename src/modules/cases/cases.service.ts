@@ -19,7 +19,10 @@ export class CasesService {
     request: GetSplitByVariantAndsLocationRequestDto
   ): Promise<GetSplitByVariantAndsLocationReponseDto[]> {
     const { date } = request;
-    const cases = await this.casesRepository.find({ where: { date } });
+    const cases = await this.casesRepository.find({
+      where: { date },
+      cache: true
+    });
 
     const variantSplit = this.groupByPropriety(cases, 'variant');
 
@@ -41,6 +44,7 @@ export class CasesService {
       .where('date <= :date', { date })
       .groupBy('location')
       .addGroupBy('variant')
+      .cache(true)
       .getRawMany();
 
     const casesSplittedByVariant = this.groupByPropriety(cases, 'variant');
