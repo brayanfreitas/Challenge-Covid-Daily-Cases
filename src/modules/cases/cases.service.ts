@@ -19,18 +19,27 @@ export class CasesService {
     const cases = await this.casesRepository.find({ where: { date } });
 
     const variantSplit = this.groupByPropriety(cases, 'variant');
+  async getByCountryAndVarianByDateCumulative(
+    request: GetSplitByVariantAndsLocationRequestDto
+  ) {
+    const { date } = request;
 
-    variantSplit.forEach((variant) => {
-      const resultGroupedByLocation = this.groupByPropriety(
-        variant.variantCasesData,
-        'location'
-      );
-      variant.variantCasesData = Object.keys(resultGroupedByLocation).map(
-        (key) => {
-          return { data: resultGroupedByLocation[key] };
-        }
-      ) as [];
-    });
+    const cases = await this.casesRepository
+      .createQueryBuilder('cases')
+      .select('variant')
+      .addSelect('location')
+      .addSelect('SUM(num_sequences) as total')
+      .distinct(true)
+      .where('date <= :date', { date })
+      .groupBy('location')
+      .addGroupBy('variant')
+      .getRawMany();
+
+    const casesSplittedByVariant = this.groupByPropriety(cases, 'variant');
+
+    const casesSplittedByLocation = this.groupByLocation(
+      casesSplittedByVariant
+    );
 
     return variantSplit as GetSplitByVariantAndsLocationReponseDto[];
   }
@@ -38,6 +47,7 @@ export class CasesService {
   private groupByPropriety(cases: Cases[], attribute: string) {
     const groupedByProps = cases.reduce((group, cases: Cases) => {
       const key = attribute === 'variant' ? cases.variant : cases.location;
+      /* istanbul ignore next */
       (group[key] = group[key] ?? []).push(cases);
       return group;
     }, {});
