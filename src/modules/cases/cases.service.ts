@@ -19,6 +19,16 @@ export class CasesService {
     const cases = await this.casesRepository.find({ where: { date } });
 
     const variantSplit = this.groupByPropriety(cases, 'variant');
+=======
+
+    const cases = await this.casesRepository.find({ where: { date } });
+
+    const variantSplit = this.groupByPropriety(cases, 'variant');
+    const locationSplit = this.groupByLocation(variantSplit);
+
+    return locationSplit;
+  }
+
   async getByCountryAndVarianByDateCumulative(
     request: GetSplitByVariantAndsLocationRequestDto
   ) {
@@ -55,5 +65,21 @@ export class CasesService {
     return Object.keys(groupedByProps).map((key) => {
       return { [attribute]: key, variantCasesData: groupedByProps[key] };
     });
+  }
+
+  private groupByLocation(variantSplit) {
+    variantSplit.forEach((variant) => {
+      const resultGroupedByLocation = this.groupByPropriety(
+        variant.variantCasesData,
+        'location'
+      );
+      variant.variantCasesData = Object.keys(resultGroupedByLocation).map(
+        (key) => {
+          return { data: resultGroupedByLocation[key] };
+        }
+      );
+    }) as LocationData[];
+
+    return variantSplit as GetSplitByVariantAndsLocationReponseDto[];
   }
 }
