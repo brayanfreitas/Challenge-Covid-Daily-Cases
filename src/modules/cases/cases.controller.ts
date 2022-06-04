@@ -34,6 +34,25 @@ export class CasesController {
   }
 
   @Get(':date/cumulative')
+  @ApiOperation({
+    summary:
+      'Count number of register until the specify date, splitted by variant and location'
+  })
+  @ApiParam({ name: 'date', description: 'Date to get registers' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'All register fetched successfully',
+    type: GetSplitByVariantAndsLocationReponseDto,
+    isArray: true
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Wrong date format'
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Something unexpected unexpected'
+  })
   async getByCountryAndVarianByDateAccumulative(
     @Param() request: GetSplitByVariantAndsLocationRequestDto
   ) {

@@ -28,6 +28,30 @@ export class CasesService {
     return locationSplit;
   }
 
+  async getByCountryAndVarianByDateCumulative(
+    request: GetSplitByVariantAndsLocationRequestDto
+  ) {
+    const { date } = request;
+
+    const cases = await this.casesRepository
+      .createQueryBuilder('cases')
+      .select('variant')
+      .addSelect('location')
+      .addSelect('SUM(num_sequences) as total')
+      .where('date <= :date', { date })
+      .groupBy('location')
+      .addGroupBy('variant')
+      .getRawMany();
+
+    const casesSplittedByVariant = this.groupByPropriety(cases, 'variant');
+
+    const casesSplittedByLocation = this.groupByLocation(
+      casesSplittedByVariant
+    );
+
+    return casesSplittedByLocation;
+  }
+
   private groupByPropriety(cases: Cases[], attribute: string) {
     const groupedByProps = cases.reduce((group, cases: Cases) => {
       const key = attribute === 'variant' ? cases.variant : cases.location;
@@ -54,23 +78,5 @@ export class CasesService {
     }) as LocationData[];
 
     return variantSplit as GetSplitByVariantAndsLocationReponseDto[];
-  }
-
-  async getByCountryAndVarianByDateCumulative(
-    request: GetSplitByVariantAndsLocationRequestDto
-  ) {
-    const { date } = request;
-
-    const cases = await this.casesRepository
-      .createQueryBuilder('cases')
-      .select('variant')
-      .addSelect('location')
-      .addSelect('SUM(num_sequences) as total')
-      .where(`date <= :date`, { date })
-      .groupBy('location')
-      .addGroupBy('variant')
-      .getRawMany();
-
-    return cases;
   }
 }
