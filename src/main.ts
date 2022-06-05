@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import {
@@ -27,5 +28,7 @@ async function bootstrap() {
   const PORT = configService.get('PORT');
 
   await app.listen(PORT || 8080);
+  const logger = new Logger('Main');
+  logger.log(`REST application running on: ${await app.getUrl()}`);
 }
 bootstrap();
