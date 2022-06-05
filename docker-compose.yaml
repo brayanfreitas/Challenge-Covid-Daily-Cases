@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=covid-cases
+    networks:
+      - app-network
+
+  app-covid:
+    build:
+      context: .
+      dockerfile: ./docker/covid.dockerfile
+    container_name: app-covid
+    command: yarn start:local
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/usr/app
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+
+networks:
+  app-network:
+    driver: bridge
