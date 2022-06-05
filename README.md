@@ -27,7 +27,7 @@ Para iniciar a API é necessário ter algumas ferramentas instaladas em sua máq
 
 ### ✅ Usando a API
 
-Há duas formas de acessar a API, de forma local ou pelo pelo link do deploy, caso a opção seja essa útilma, clique no seginte link, <a href="http://134.122.18.236:3000/api/"> Link para a API</a>, ele irá te redirecionar para a API documentada no Swagger.
+Há duas formas de acessar a API, de forma local ou pelo pelo link do deploy, caso a opção seja essa útilma, clique no seginte link, <a href="https://covid-daily-challenge.herokuapp.com/api/static/index.html#/"> Link para a API</a>, ele irá te redirecionar para a API documentada no Swagger.
 
 ### ✅ Clonando repositório
 
