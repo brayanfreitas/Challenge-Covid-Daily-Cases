@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,
@@ -22,6 +23,9 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(3000, '0.0.0.0');
+  const configService = app.get(ConfigService);
+  const PORT = configService.get('PORT');
+
+  await app.listen(PORT || 8080);
 }
 bootstrap();
